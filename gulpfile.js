@@ -1,7 +1,9 @@
-const gulp   = require('gulp');
-const ts     = require('gulp-typescript');
-const jshint = require('gulp-jshint');  //js检查
-const clean  = require('gulp-clean');   //清空文件夹
+const gulp     = require('gulp');
+const ts       = require('gulp-typescript');
+const jshint   = require('gulp-jshint');  //js检查
+const clean    = require('gulp-clean');   //清空文件夹
+const watchify = require("watchify");   // 变化即时编译
+const fancyLog = require("fancy-log");
  
 // 复制html文件
 gulp.task('clean-html', () => {
@@ -31,11 +33,11 @@ gulp.task('build-ts', gulp.series('clean-ts', () => {
 
 
 // 打包typescript输出为浏览器可用的版本
-var browserify = require("browserify");
-var source = require("vinyl-source-stream");
-var tsify = require("tsify");
+const browserify = require("browserify");
+const source = require("vinyl-source-stream");
+const tsify = require("tsify");
 
-gulp.task("browserify-ts", gulp.series('build-ts', () => {
+let browserifyTs = () => {
 	return browserify({
 		basedir: ".",
 		debug: true,
@@ -45,12 +47,35 @@ gulp.task("browserify-ts", gulp.series('build-ts', () => {
 		cache: {},
 		packageCache: {}
 	})
-	.plugin(tsify)
-	.bundle()
-	.pipe(source("test-browserify-bundle.js"))
-	.pipe(gulp.dest("./target/scripts/ts/"));
+	.plugin(tsify);
+};
+ 
+// 监控网页脚本的变化，即时编译typescript
+let watchedBrowserifyTs = watchify(browserifyTs());
+
+let bundleTs = (preStep) => {
+	return preStep 
+		.bundle()
+		.on("error", fancyLog)
+		.pipe(source("test-browserify-bundle.js"))
+		.pipe(gulp.dest("./target/scripts/ts/"));
+
+};
+
+gulp.task("browserify-ts", gulp.series('build-ts', async () => { 
+	await bundleTs(browserifyTs()); 
+}));
+
+gulp.task("watch-browserify-ts", gulp.series('build-ts', async () => { 
+	await bundleTs(watchedBrowserifyTs); 
 }));
  
 // 命令的组合，并行执行
-// gulp.task('default', gulp.parallel('copy-html', 'build-ts'));
 gulp.task('default', gulp.parallel('copy-html', 'browserify-ts'));
+gulp.task('watching', gulp.parallel('copy-html', 'watch-browserify-ts'));
+
+// 
+watchedBrowserifyTs.on("update", gulp.parallel("browserify-ts"));
+watchedBrowserifyTs.on("log", fancyLog);
+
+

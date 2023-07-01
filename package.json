@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "browserify": "^17.0.0",
+    "fancy-log": "^2.0.0",
     "gulp": "^4.0.2",
     "gulp-clean": "^0.4.0",
     "gulp-cli": "^2.3.0",
@@ -8,6 +9,7 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "tsify": "^5.0.4",
     "typescript": "^5.1.6",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^4.0.0"
   }
 }

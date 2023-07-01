@@ -1,4 +1,4 @@
-let user = new Student("Jane", "M.", "User");
+let user = new Student("Jane", "M.", "User auto v5");
   
 console.log(greeter(user));
  
