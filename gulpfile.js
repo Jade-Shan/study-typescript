@@ -47,7 +47,7 @@ gulp.task("browserify-ts", gulp.series('build-ts', () => {
 	})
 	.plugin(tsify)
 	.bundle()
-	.pipe(source("bundle-test-page.js"))
+	.pipe(source("test-browserify-bundle.js"))
 	.pipe(gulp.dest("./target/scripts/ts/"));
 }));
  
