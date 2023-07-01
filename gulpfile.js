@@ -69,6 +69,7 @@ gulp.task("browserify-ts", gulp.parallel('build-ts', browserifyTasks));
 // 观察文件更新
 const watch = require('gulp-watch');
 
+// 针对每个目录调用不同的构建任务
 let watchTask = (path, task) => {
 	return watch(path, () => {
 		console.log(`watch file change: ${path} `);
@@ -76,6 +77,7 @@ let watchTask = (path, task) => {
 	});
 };
 
+// 把所有要监控的目录都加上去
 gulp.task('watching', () => {
 	watchTask("./src/html/" + "**/*.html", "copy-html");
 	watchTask("./src/scripts/ts/" + "**/*.ts", "browserify-ts");
