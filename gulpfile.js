@@ -42,7 +42,8 @@ let browserifyTs = () => {
 		basedir: ".",
 		debug: true,
 		entries: [
-			"./src/scripts/ts/" + "test-browserify.ts"
+			"./src/scripts/ts/" + "test-browserify.ts",
+			"./src/scripts/ts/" + "test-browserify-02.ts"
 		],
 		cache: {},
 		packageCache: {}

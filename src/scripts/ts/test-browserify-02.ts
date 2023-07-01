@@ -1,0 +1,10 @@
+import { greeter, Student } from "./module01/greeter";
+
+let user02 = new Student("Jane", "M.", "tester auto v5");
+  
+console.log(greeter(user02));
+ 
+let p = document.getElementById("user02");
+if (p) {
+p.innerText = greeter(user02);
+}
