@@ -54,7 +54,7 @@ let browserifyTs = (filename) => {
 		.pipe(gulp.dest("./target/scripts/ts/"));
 };
 
-let browserifyTasks = [ 'build-ts' ];
+let browserifyTasks = [  ];
 
 // 遍历每一个要被网页引用的ts，生成任务
 [ "test-browserify-01.ts",
@@ -63,7 +63,7 @@ let browserifyTasks = [ 'build-ts' ];
 	browserifyTasks.push(() => { return browserifyTs(o); });
 });
 
-gulp.task("browserify-ts", gulp.parallel(browserifyTasks));
+gulp.task("browserify-ts", gulp.parallel('build-ts', browserifyTasks));
 
 
 // 观察文件更新
