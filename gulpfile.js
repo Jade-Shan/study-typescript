@@ -2,7 +2,7 @@ const gulp     = require('gulp');
 const ts       = require('gulp-typescript');
 const jshint   = require('gulp-jshint');  //js检查
 const clean    = require('gulp-clean');   //清空文件夹
-const watchify = require("watchify");   // 变化即时编译
+// const watchify = require("watchify");   // 变化即时编译
 const fancyLog = require("fancy-log");
  
 // 复制html文件
@@ -37,47 +37,56 @@ const browserify = require("browserify");
 const source = require("vinyl-source-stream");
 const tsify = require("tsify");
 
-let browserifyTs = () => {
+let browserifyTs = (filename) => {
+	let dstFilename = filename.replace(/\.ts$/,'-bundle.js');
 	return browserify({
 		basedir: ".",
 		debug: true,
 		entries: [
-			"./src/scripts/ts/" + "test-browserify.ts",
-			"./src/scripts/ts/" + "test-browserify-02.ts"
+			"./src/scripts/ts/" + filename,
 		],
 		cache: {},
 		packageCache: {}
-	})
-	.plugin(tsify);
-};
- 
-// 监控网页脚本的变化，即时编译typescript
-let watchedBrowserifyTs = watchify(browserifyTs());
-
-// 绑定编译出的TS到输出文件
-let bundleTs = (preStep) => {
-	return preStep 
+	}).plugin(tsify)
 		.bundle()
 		.on("error", fancyLog)
-		.pipe(source("test-browserify-bundle.js"))
+		.pipe(source(dstFilename))
 		.pipe(gulp.dest("./target/scripts/ts/"));
-
 };
 
-gulp.task("browserify-ts", gulp.series('build-ts', async () => { 
-	await bundleTs(browserifyTs()); 
-}));
+let browserifyTasks = [ 'build-ts' ];
 
-gulp.task("watch-browserify-ts", gulp.series('build-ts', async () => { 
-	await bundleTs(watchedBrowserifyTs); 
-}));
- 
+// 遍历每一个要被网页引用的ts，生成任务
+[ "test-browserify-01.ts",
+	"test-browserify-02.ts"
+].forEach((o) => {
+	browserifyTasks.push(() => { return browserifyTs(o); });
+});
+
+gulp.task("browserify-ts", gulp.parallel(browserifyTasks));
+
+
+// 观察文件更新
+const watch = require('gulp-watch');
+
+let watchTask = (path, task) => {
+	return watch(path, () => {
+		console.log(`watch file change: ${path} `);
+		gulp.parallel(task)(); 
+	});
+};
+
+gulp.task('watching', () => {
+	watchTask("./src/html/" + "**/*.html", "copy-html");
+	watchTask("./src/scripts/ts/" + "**/*.ts", "browserify-ts");
+});
+
+
+
 // 命令的组合，并行执行
 gulp.task('default', gulp.parallel('copy-html', 'browserify-ts'));
-gulp.task('watching', gulp.parallel('copy-html', 'watch-browserify-ts'));
+gulp.task('develop', gulp.parallel('copy-html', 'browserify-ts', 'watching'));
 
-// 
-watchedBrowserifyTs.on("update", gulp.parallel("browserify-ts"));
-watchedBrowserifyTs.on("log", fancyLog);
+
 
 

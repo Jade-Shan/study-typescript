@@ -1,6 +1,6 @@
 import { greeter, Student } from "./module01/greeter";
 
-let user02 = new Student("Jane", "M.", "tester auto v5");
+var user02 = new Student("Jane", "M.", "tester auto v8");
   
 console.log(greeter(user02));
  
