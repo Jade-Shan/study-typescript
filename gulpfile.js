@@ -53,6 +53,7 @@ let browserifyTs = () => {
 // 监控网页脚本的变化，即时编译typescript
 let watchedBrowserifyTs = watchify(browserifyTs());
 
+// 绑定编译出的TS到输出文件
 let bundleTs = (preStep) => {
 	return preStep 
 		.bundle()
