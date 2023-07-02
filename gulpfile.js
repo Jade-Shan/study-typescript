@@ -52,10 +52,10 @@ let browserifyTs = (filename) => {
 		cache: {},
 		packageCache: {}
 	}).plugin(tsify)
-		.transform("babelify", {
-			presets: ["es2015"],
-			extensions: [".ts"],
-		})
+//		.transform("babelify", {
+//			presets: ["es2015"],
+//			extensions: [".ts"],
+//		})
 		.bundle()
 		.pipe(source(dstFilename))
 		.pipe(buffer())
