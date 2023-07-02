@@ -1,5 +1,9 @@
-let user = new Student("Jane", "M.", "User auto v5");
+
+let user01 = new Student("jane", "m.", "user auto v2");
   
-console.log(greeter(user));
+console.log(greeter(user01));
  
-document.body.textContent = greeter(user);
+let p = document.getElementById("user01");
+if (p) {
+	p.innerText = greeter(user01);
+}

@@ -1,5 +1,5 @@
 import { greeter, Student } from "./module01/greeter";
  
-let user = new Student("Jane", "M.", "User goback");
+let user01 = new Student("jane", "m.", "user auto v2");
   
-console.log(greeter(user));
+console.log(greeter(user01));
