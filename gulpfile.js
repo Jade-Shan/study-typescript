@@ -34,8 +34,12 @@ gulp.task('build-ts', gulp.series('clean-ts', () => {
 
 // 打包typescript输出为浏览器可用的版本
 const browserify = require("browserify");
-const source = require("vinyl-source-stream");
-const tsify = require("tsify");
+const source     = require("vinyl-source-stream");
+const tsify      = require("tsify");
+
+var terser       = require("gulp-terser");
+var sourcemaps   = require("gulp-sourcemaps");
+var buffer       = require("vinyl-buffer");
 
 let browserifyTs = (filename) => {
 	let dstFilename = filename.replace(/\.ts$/,'-bundle.js');
@@ -48,9 +52,17 @@ let browserifyTs = (filename) => {
 		cache: {},
 		packageCache: {}
 	}).plugin(tsify)
+		.transform("babelify", {
+			presets: ["es2015"],
+			extensions: [".ts"],
+		})
 		.bundle()
-		.on("error", fancyLog)
 		.pipe(source(dstFilename))
+		.pipe(buffer())
+		.pipe(sourcemaps.init({ loadMaps: true }))
+		.pipe(terser())
+		.pipe(sourcemaps.write("./"))
+		.on("error", fancyLog)
 		.pipe(gulp.dest("./target/scripts/ts/"));
 };
 
